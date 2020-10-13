@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Input from './components/Input'
 import Button from './components/Button'
@@ -13,7 +13,7 @@ function App() {
   const [edit, setEdit] = useState(null);
 
   useEffect(() => {
-    console.log(list);
+    localStorage.setItem('data', JSON.stringify([...list]))
   }, [list])
 
   function createTodo(value) {
@@ -26,7 +26,7 @@ function App() {
   }
 
   function deleteTodo(id) {
-    setList(list.filter(item => item.id !== id));
+    setList(list.filter(item => item.id !== id));    
   }
 
   function updateTodo() {
@@ -42,6 +42,11 @@ function App() {
     setNewInput('')
   }
 
+  function deleteAllSavedData() {
+    setList([])
+    localStorage.clear()
+  }
+
   function handleInputValue(e) {
     setInput(e.target.value)
   }
@@ -54,6 +59,7 @@ function App() {
     <>
       <Input input={input} mudarInput={handleInputValue} />
       <Button style="save" name="Add" click={() => createTodo(input)} />
+      <Button style="delete" name="Delete all" click={deleteAllSavedData} />
 
       <div className="list">
         {list.map(item => (
@@ -67,7 +73,7 @@ function App() {
       {edit && (
         <div>
           <Input input={newInput} mudarInput={handleNewInputValue} />
-          <Button style="update" name="Rename" click={() => updateTodo()} />
+          <Button style="update" name="Rename" click={updateTodo} />
         </div>
       )}
     </>
