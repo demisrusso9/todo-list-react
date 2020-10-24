@@ -1,10 +1,16 @@
 import React from 'react'
 
-export default (props) => {
-    return (
-        <input className="input"
-            type="text"
-            value={props.input}
-            onChange={props.mudarInput} autoFocus/>
-    );
+function Input(props) {
+   return (
+      <input className="input-search"
+         type="text"
+         value={props.input}
+         onChange={props.changeInput}
+         onClick={props.function}
+         placeholder={props.name}     
+         onKeyDown={props.enterKey}          
+         />
+   )
 }
+
+export default Input

@@ -1,83 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
-import Input from './components/Input'
 import Button from './components/Button'
-
-import './style.css'
+import Input from './components/Input'
 
 function App() {
-  const [list, setList] = useState(JSON.parse(localStorage.getItem('data')) || []);
 
-  const [input, setInput] = useState('');
-  const [newInput, setNewInput] = useState('');
-  const [edit, setEdit] = useState(null);
+  const [list, setList] = useState(JSON.parse(localStorage.getItem('data')) || [])
+  const [input, setInput] = useState('')
+  const [newInput, setNewInput] = useState('')
+  const [edit, setEdit] = useState(false)
+  const [search, setSearch] = useState()
 
   useEffect(() => {
     localStorage.setItem('data', JSON.stringify([...list]))
+    setSearch(listTodos([...list]))
   }, [list])
 
-  function createTodo(value) {
-    if (!value.trim()) return;
+  //CRUD
+  function createTodo() {
+    if (!input.trim()) return alert('Campo vazio')
 
-    let obj = { id: Math.random() + 1, name: value }
-
-    localStorage.setItem('data', JSON.stringify([...list, obj]))
-    setList([...list, obj])
+    let obj = { id: Math.random() + 1, description: input, done: false }
+    setList([obj, ...list]);
+    setInput('')
   }
 
-  function deleteTodo(id) {
-    setList(list.filter(item => item.id !== id));    
+  function listTodos(todos) {
+    return (
+      <div>
+        {todos.map(todo => (
+          <p key={todo.id}>{todo.description}
+            <Button function={() => markAsDone(todo.id)} name="Done" />
+            <Button function={() => setEdit(todo.id)} name="Rename" />
+            <Button function={() => deleteTodo(todo.id)} name="Delete" />
+          </p>
+        ))}
+      </div>
+    )
   }
 
   function updateTodo() {
-    let array = [...list];
+    list.map((todo, i) => (todo.id === edit) ? list[i] = { id: edit, description: newInput, done: false } : '')
 
-    array.map((item, i) => {
-      if (item.id === edit) array[i] = { id: edit, name: newInput }
-    })
-
-    setList([...array]);
-    setEdit(false)
-    setInput('')
+    setEdit(false);
     setNewInput('')
+    setList([...list])
   }
 
-  function deleteAllSavedData() {
-    setList([])
-    localStorage.clear()
+  function deleteTodo(id) {
+    setList(list.filter(item => (item.id !== id)))
   }
 
-  function handleInputValue(e) {
+  //Search
+  function searchTodos(e) {       
+    let value = e.target.value.toLowerCase();
+    let filtered = list.filter(todo => (todo.description.toLowerCase().includes(value)));            
+    setSearch(listTodos(filtered))
+  }
+
+  //LocalStorage
+  function deleteAllData() {
+    setList([]);
+    localStorage.clear();
+  }
+
+  function markAsDone(id) {
+    let array = list;
+
+    array.map((todo, i) => (todo.id === id) ? array[i] = { ...array[i], done: true } : { ...array[i] })
+
+    setList([...array])
+  }
+
+  //Handle Input
+  function handleInputChange(e) {
     setInput(e.target.value)
   }
 
-  function handleNewInputValue(e) {
+  function handleNewInputChange(e) {
     setNewInput(e.target.value)
+  }
+
+  function handleEnterKey(e) {
+    if (e.key === 'Enter') createTodo()
   }
 
   return (
     <>
-      <Input input={input} mudarInput={handleInputValue} />
-      <Button style="save" name="Add" click={() => createTodo(input)} />
-      <Button style="delete" name="Delete all" click={deleteAllSavedData} />
+      <Input input={input} changeInput={handleInputChange} name="Add Todo" enterKey={handleEnterKey} />
 
-      <div className="list">
-        {list.map(item => (
-          <p key={item.id}> {item.name}
-            <Button style="update" name="Rename" click={() => setEdit(item.id)} />
-            <Button style="delete" name="Delete" click={() => deleteTodo(item.id)} />
-          </p>
-        ))}
-      </div>
+      <Button function={createTodo} name="Adicionar" />
+      <Button function={deleteAllData} name="Deletar Tudo" />
 
+      <Input changeInput={searchTodos} name="Buscar" />      
+      
+      {search}
+      
       {edit && (
         <div>
-          <Input input={newInput} mudarInput={handleNewInputValue} />
-          <Button style="update" name="Rename" click={updateTodo} />
+          <Input input={newInput} changeInput={handleNewInputChange} name="Rename" />
+          <Button function={updateTodo} name="Renomear" />
         </div>
       )}
     </>
-  );
+  )
 }
 
-export default App;
+export default App
