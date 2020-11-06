@@ -1,0 +1,9 @@
+.select-items {    
+    margin-left: 1rem;
+    cursor: pointer;    
+    height: 40px;      
+    width: 20rem;  
+    border: 0;
+    outline: 0;
+    text-align-last: center;    
+}

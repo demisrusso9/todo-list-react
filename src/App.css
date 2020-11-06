@@ -1,0 +1,23 @@
+.add-todos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(309px, 1fr));
+    margin: 1rem;  
+}
+
+.add-todos, .icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icons {    
+    margin-left: 1rem;
+    width: 20rem;
+}
+
+.rename {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+}

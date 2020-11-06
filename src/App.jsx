@@ -1,45 +1,47 @@
 import React, { useState, useEffect } from 'react'
 
-import Button from './components/Button'
+//Components
 import Input from './components/Input'
+import Icon from './components/IconButton'
+import ListTodos from './components/ListTodos'
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyles, lightTheme, darkTheme } from './assets/themes/themes'
+
+//Icons
+import addIcon from './assets/icons/add.png'
+import deleteAllIcon from './assets/icons/delete-all.png'
+import editIcon from './assets/icons/edit.png'
+import darkModeIcon from './assets/icons/dark-mode.png'
+import cancelIcon from './assets/icons/cancel.png'
+
+import './App.css'
 
 function App() {
-
   const [list, setList] = useState(JSON.parse(localStorage.getItem('data')) || [])
   const [input, setInput] = useState('')
   const [newInput, setNewInput] = useState('')
   const [edit, setEdit] = useState(false)
-  const [search, setSearch] = useState()
+  const [darkMode, setDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode')) || false)
 
-  useEffect(() => {
-    localStorage.setItem('data', JSON.stringify([...list]))
-    setSearch(listTodos([...list]))
-  }, [list])
+  useEffect(() => localStorage.setItem('data', JSON.stringify([...list])), [list])
+  useEffect(() => localStorage.setItem('darkMode', JSON.stringify(darkMode)), [darkMode])
 
   //CRUD
-  function createTodo() {
-    if (!input.trim()) return alert('Campo vazio')
+  const createTodo = () => {
+    if (!input.trim()) return alert('Empty field');
+    if (existsInList(input)) return alert('Item already in the list!');
 
     let obj = { id: Math.random() + 1, description: input, done: false }
     setList([obj, ...list]);
     setInput('')
   }
 
-  function listTodos(todos) {
-    return (
-      <div>
-        {todos.map(todo => (
-          <p key={todo.id}>{todo.description}
-            <Button function={() => markAsDone(todo.id)} name="Done" />
-            <Button function={() => setEdit(todo.id)} name="Rename" />
-            <Button function={() => deleteTodo(todo.id)} name="Delete" />
-          </p>
-        ))}
-      </div>
-    )
-  }
+  const existsInList = (value) => list.some(item => item.description.toLowerCase() === value.toLowerCase());
 
-  function updateTodo() {
+  const updateTodo = () => {
+    if (!newInput.trim()) return alert('Empty field')
+    if (existsInList(newInput)) return alert('Item already in the list!');
+
     list.map((todo, i) => (todo.id === edit) ? list[i] = { id: edit, description: newInput, done: false } : '')
 
     setEdit(false);
@@ -47,62 +49,53 @@ function App() {
     setList([...list])
   }
 
-  function deleteTodo(id) {
-    setList(list.filter(item => (item.id !== id)))
+  const deleteTodo = (id) => setList(list.filter(item => (item.id !== id)));
+
+  const deleteAllData = () => {
+    if (!list.length) return alert('No items to delete')
+
+    if (window.confirm('Are you sure you want to delete all items?')) {
+      setList([]);
+      localStorage.clear();
+    }
   }
 
-  //Search
-  function searchTodos(e) {       
-    let value = e.target.value.toLowerCase();
-    let filtered = list.filter(todo => (todo.description.toLowerCase().includes(value)));            
-    setSearch(listTodos(filtered))
+  const markAsDone = (id) => {
+    setList(list.map((todo, i) => (todo.id === id) ? list[i] = { ...list[i], done: true } : { ...list[i] }))
   }
 
-  //LocalStorage
-  function deleteAllData() {
-    setList([]);
-    localStorage.clear();
-  }
-
-  function markAsDone(id) {
-    let array = list;
-
-    array.map((todo, i) => (todo.id === id) ? array[i] = { ...array[i], done: true } : { ...array[i] })
-
-    setList([...array])
-  }
+  const darkModeTheme = () => setDarkMode(prev => !prev);
 
   //Handle Input
-  function handleInputChange(e) {
-    setInput(e.target.value)
-  }
-
-  function handleNewInputChange(e) {
-    setNewInput(e.target.value)
-  }
-
-  function handleEnterKey(e) {
-    if (e.key === 'Enter') createTodo()
-  }
+  const handleInputChange = (e) => setInput(e.target.value);
+  const handleNewInputChange = (e) => setNewInput(e.target.value);
+  const handleEnterKeyAdd = (e) => (e.key === 'Enter') ? createTodo() : null;
+  const handleEnterKeyRename = (e) => (e.key === 'Enter') ? updateTodo() : null;
 
   return (
-    <>
-      <Input input={input} changeInput={handleInputChange} name="Add Todo" enterKey={handleEnterKey} />
+    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <GlobalStyles />
 
-      <Button function={createTodo} name="Adicionar" />
-      <Button function={deleteAllData} name="Deletar Tudo" />
+      <div className="add-todos">
+        <Input input={input} changeInput={handleInputChange} name="Add Todo" enterKey={handleEnterKeyAdd} />
 
-      <Input changeInput={searchTodos} name="Buscar" />      
-      
-      {search}
-      
+        <div className="icons">
+          <Icon function={createTodo} icon={addIcon} msg={'Add todo'} />
+          <Icon function={deleteAllData} icon={deleteAllIcon} msg={'Delete All todos'} />
+          <Icon function={darkModeTheme} icon={darkModeIcon} msg={`Dark mode: ${darkMode ? 'on' : 'off'}`} />
+        </div>
+      </div>
+
+      <ListTodos todos={list} done={markAsDone} edit={setEdit} deleteItem={deleteTodo} />
+
       {edit && (
-        <div>
-          <Input input={newInput} changeInput={handleNewInputChange} name="Rename" />
-          <Button function={updateTodo} name="Renomear" />
+        <div className="rename">
+          <Input input={newInput} changeInput={handleNewInputChange} name="Rename" enterKey={handleEnterKeyRename} />
+          <Icon function={updateTodo} icon={editIcon} msg={'Update todo'} />
+          <Icon function={() => setEdit(false)} icon={cancelIcon} msg={'Cancel'} />
         </div>
       )}
-    </>
+    </ThemeProvider>
   )
 }
 
