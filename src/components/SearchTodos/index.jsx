@@ -26,7 +26,7 @@ function SearchTodos(props) {
    return (
       <>
          <div className="search-items">
-            <Input changeInput={searchTodos} name="Buscar" />
+            <Input changeInput={searchTodos} name="Search" />
             <Select status={todoStatus} />
          </div>         
       </>
