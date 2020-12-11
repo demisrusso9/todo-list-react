@@ -17,6 +17,11 @@ body, input, button, textarea {
     font: 400 1.4rem/1 Verdana, Geneva, Tahoma, sans-serif;
 }
 
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
+
 ::-webkit-scrollbar {
     display: none;
 }

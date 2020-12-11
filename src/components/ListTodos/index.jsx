@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import Icon from '../IconButton'
+import Icon from '../IconImg'
 import SearchTodos from '../SearchTodos'
 
 import doneIcon from '../../assets/icons/done.png'

@@ -3,5 +3,6 @@
     width: 100%;
     border: 0;        
     text-align: center;    
-    outline: none;         
+    outline: none;        
+    max-width: 600px;     
 }

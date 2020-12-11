@@ -1,18 +1,22 @@
 .add-todos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(309px, 1fr));
-    margin: 1rem;  
+    margin: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.add-todos, .icons {
+.buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
 .icons {    
-    margin-left: 1rem;
-    width: 20rem;
+    display: grid;
+    justify-items: center;
+    align-items: center;    
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
 }
 
 .rename {
@@ -20,4 +24,29 @@
     justify-content: center;
     align-items: center;
     margin: 1rem;
+}
+
+#file {
+    display: none;
+}
+
+.icons label, a {
+    height: 40px;
+    width: 40px;
+    font: 400 1.8rem Verdana, sans-serif;
+    border-radius: 3px;
+    cursor: pointer;
+    color: black;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icons label, a {
+    background-color: rgb(76, 167, 197);
+    transition: .4s;
+}
+
+.icons label:hover, a:hover {
+    opacity: 0.6;
 }
