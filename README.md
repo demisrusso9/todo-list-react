@@ -1,5 +1,11 @@
-## `yarn install or npm install` to download dependencies.
+ ### Todo List
 
-In the project directory, you can run:
+Depois do treinamento com `HTML, CSS e JavaScript`, refiz com ReactJs.
 
-### `yarn start or npm start` to start the application.
+- [x] CRUD
+- [x] Busca
+- [x] Salvo no Localstorage
+- [x] Tema Escuro
+- [x] Import e Export
+
+Projeto de treinamento [demisrusso9/CRUD-JavaScript](https://github.com/demisrusso9/CRUD-JavaScript)
